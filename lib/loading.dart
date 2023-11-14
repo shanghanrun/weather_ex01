@@ -13,17 +13,15 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  var lat, lon;
+  late var lat, lon;
+  late var weather, temp, humidity, wind;
+  bool isLoading = true; // 데이터 로딩상태를 관리하기 위한 변수
   Future<Position?> getLocation() async {
     try {
       LocationPermission permission = await Geolocator.requestPermission();
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       print(position);
-      // lat = position.latitude;
-      // lon = position.longitude;
-      print(position.latitude);
-      print(position.longitude);
       return position;
     } catch (e) {
       print(e);
@@ -34,8 +32,10 @@ class _LoadingState extends State<Loading> {
   Future<void> fetchData() async {
     Position? position = await getLocation(); // 완료될 때까지 기다린다.
     if (position != null) {
-      lat = position.latitude;
-      lon = position.longitude;
+      setState(() {
+        lat = position.latitude;
+        lon = position.longitude;
+      });
     } else {
       return;
     }
@@ -51,6 +51,13 @@ class _LoadingState extends State<Loading> {
       // HTTP 요청이 성공한 경우
       var weatherData = jsonDecode(response.body);
       print(weatherData);
+      setState(() {
+        weather = weatherData['weather'][0]['main'];
+        temp = (weatherData['main']['temp'] - 32) / 1.8;
+        humidity = weatherData['main']['humidity'];
+        wind = weatherData['wind']['speed'];
+        isLoading = false; // 데이터 로딩이 완료됨을 표시
+      });
     } else {
       // HTTP 요청이 실패한 경우
       print('Failed to load weather data. Status code: ${response.statusCode}');
@@ -68,15 +75,28 @@ class _LoadingState extends State<Loading> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            getLocation();
-          },
-          child: const Text(
-            'Get my location',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
+        child: isLoading
+            ? const CircularProgressIndicator()
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      getLocation();
+                    },
+                    child: const Text(
+                      'Get my location',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  Text(
+                      '위치: ${lat.toStringAsFixed(2)},  ${lon.toStringAsFixed(2)}'),
+                  Text('날씨: $weather'),
+                  Text('온도: ${temp.toStringAsFixed(2)}'),
+                  Text('습도: $humidity'),
+                  Text('풍속: $wind'),
+                ],
+              ),
       ),
     );
   }
