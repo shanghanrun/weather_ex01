@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'loading.dart';
 import 'screens/screenA.dart';
 import 'screens/screenB.dart';
