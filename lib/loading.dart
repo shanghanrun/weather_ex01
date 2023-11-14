@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
+import 'package:weather_ex01/mylocation.dart';
+import 'network.dart';
 
 class Loading extends StatefulWidget {
   const Loading({super.key});
@@ -16,58 +13,34 @@ class _LoadingState extends State<Loading> {
   late var lat, lon;
   late var weather, temp, humidity, wind;
   bool isLoading = true; // 데이터 로딩상태를 관리하기 위한 변수
-  Future<Position?> getLocation() async {
-    try {
-      LocationPermission permission = await Geolocator.requestPermission();
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      print(position);
-      return position;
-    } catch (e) {
-      print(e);
-      return null;
-    }
-  }
+
+  // Future<void> getLocation() async {
+  //   MyLocation myLocation = MyLocation();
+  //   await myLocation.getLocation();
+  //   lat = myLocation.lat;
+  //   lon = myLocation.lon;
+  // }
 
   Future<void> fetchData() async {
-    Position? position = await getLocation(); // 완료될 때까지 기다린다.
-    if (position != null) {
-      setState(() {
-        lat = position.latitude;
-        lon = position.longitude;
-      });
-    } else {
-      return;
-    }
+    MyLocation myLocation = MyLocation();
+    await myLocation.getLocation();
+    lat = myLocation.lat;
+    lon = myLocation.lon;
+    Network network = Network(lat, lon); //lat,lon 값 얻기 위해 먼저 getLocation()
+    await network.fetchData();
 
-    await dotenv.load();
-    String apiKey = dotenv.env['APIKEY']!;
-    // const apiKey = '3b37f6cba7de33d06a1f3edc2f2fa085';
-    // var lat = 36.6248;  // var lon = 126.978;
-    var url = Uri.parse(
-        'https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$apiKey');
-    http.Response response = await http.get(url);
-    if (response.statusCode == 200) {
-      // HTTP 요청이 성공한 경우
-      var weatherData = jsonDecode(response.body);
-      print(weatherData);
-      setState(() {
-        weather = weatherData['weather'][0]['main'];
-        temp = (weatherData['main']['temp'] - 32) / 1.8;
-        humidity = weatherData['main']['humidity'];
-        wind = weatherData['wind']['speed'];
-        isLoading = false; // 데이터 로딩이 완료됨을 표시
-      });
-    } else {
-      // HTTP 요청이 실패한 경우
-      print('Failed to load weather data. Status code: ${response.statusCode}');
-    }
+    weather = network.weather;
+    temp = network.temp;
+    humidity = network.humidity;
+    wind = network.wind;
+    setState(() {
+      isLoading = false; //데이터 로딩완료
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    // getLocation();
     fetchData();
   }
 
@@ -82,7 +55,7 @@ class _LoadingState extends State<Loading> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      getLocation();
+                      // getLocation();
                     },
                     child: const Text(
                       'Get my location',
