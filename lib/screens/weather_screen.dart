@@ -13,7 +13,7 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
-  var weather, temp, humidity, wind, city;
+  var weather, id, temp, humidity, wind, city;
   var date = DateTime.now();
   @override
   void initState() {
@@ -24,6 +24,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   void updateData(dynamic data) {
     weather = data['weather'][0]['main'];
+    id = data['weather'][0]['id'];
     temp = data['main']['temp'];
     temp = temp.round();
     humidity = data['main']['humidity'];
@@ -79,7 +80,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           children: [
                             const SizedBox(height: 150),
                             Text(
-                              'Seoul',
+                              '$city',
                               style: GoogleFonts.lato(
                                 fontSize: 35.0,
                                 fontWeight: FontWeight.bold,
@@ -124,7 +125,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '18\u2103',
+                              '$temp\u2103',
                               style: GoogleFonts.lato(
                                 fontSize: 85.0,
                                 fontWeight: FontWeight.w300,
