@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weather_ex01/mylocation.dart';
 import 'network.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Loading extends StatefulWidget {
   const Loading({super.key});
@@ -10,9 +11,10 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> {
-  static const url = 'https://api.openweathermap.org/data/2.5/weather';
-  var lat, lon;
-  var data, weather, temp, humidity, wind;
+  var _lat, _lon;
+  var _data; // json 결과 다양한 타입
+  String? weather;
+  double? temp, humidity, wind;
   bool isLoading = true; // 데이터 로딩상태를 관리하기 위한 변수
 
   Future<void> getLocation() async {
@@ -20,23 +22,29 @@ class _LoadingState extends State<Loading> {
     MyLocation myLocation = MyLocation();
     await myLocation.getCurrentLocation();
     setState(() {
-      lat = myLocation.lat;
-      lon = myLocation.lon;
+      _lat = myLocation.lat;
+      _lon = myLocation.lon;
     });
   }
 
   Future<void> fetchData() async {
     MyLocation myLocation = MyLocation();
     await myLocation.getCurrentLocation();
-    lat = myLocation.lat;
-    lon = myLocation.lon;
-    Network network = Network(url, lat, lon); //lat,lon 값 얻기 위해 먼저 getLocation()
-    data = await network.getJsonData();
+    _lat = myLocation.lat;
+    _lon = myLocation.lon;
 
-    weather = data['weather'][0]['main'];
-    temp = (data['main']['temp'] - 32) / 1.8;
-    humidity = data['main']['humidity'];
-    wind = data['wind']['speed'];
+    await dotenv.load();
+    String apiKey = dotenv.env['APIKEY']!;
+    var url = Uri.parse(
+        'https://api.openweathermap.org/data/2.5/weather?lat=$_lat&lon=$_lon&appid=$apiKey');
+
+    Network network = Network(url);
+    _data = await network.getJsonData();
+
+    weather = _data['weather'][0]['main'];
+    temp = (_data['main']['temp'] - 32) / 1.8;
+    humidity = _data['main']['humidity'];
+    wind = _data['wind']['speed'];
     setState(() {
       isLoading = false; //데이터 로딩완료
     });
@@ -78,9 +86,9 @@ class _LoadingState extends State<Loading> {
                   ),
                   const SizedBox(height: 30),
                   Text(
-                      '위치: ${lat.toStringAsFixed(2)},  ${lon.toStringAsFixed(2)}'),
+                      '위치: ${_lat.toStringAsFixed(2)},  ${_lon.toStringAsFixed(2)}'),
                   Text('날씨: $weather'),
-                  Text('온도: ${temp.toStringAsFixed(2)}'),
+                  Text('온도: ${temp!.toStringAsFixed(2)}'),
                   Text('습도: $humidity'),
                   Text('풍속: $wind'),
                 ],
