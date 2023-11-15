@@ -10,7 +10,7 @@ class Network {
     if (response.statusCode == 200) {
       // HTTP 요청이 성공한 경우
       var data = jsonDecode(response.body);
-      print(data);
+      print('날씨 정보를 잘 받아왔습니다. : \n$data');
       return data;
     } else {
       print('Failed to load weather data. Status code: ${response.statusCode}');
