@@ -149,16 +149,98 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       ],
                     ),
                   ),
-                  const Column(
+                  Column(
                     children: [
-                      Divider(
+                      const Divider(
                         height: 15,
                         thickness: 2,
                         color: Colors.white54,
                       ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('미세먼지'),
+                          Column(
+                            children: [
+                              Text(
+                                'AQI(대기질지수)',
+                                style: GoogleFonts.lato(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Image.asset(
+                                'Images/bad.png',
+                                width: 37,
+                                height: 35,
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                '매우나쁨',
+                                style: GoogleFonts.lato(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                '미세먼지',
+                                style: GoogleFonts.lato(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                '174.75',
+                                style: GoogleFonts.lato(
+                                  fontSize: 24,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                'µg/m3',
+                                style: GoogleFonts.lato(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                '초미세먼지',
+                                style: GoogleFonts.lato(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                '84.03',
+                                style: GoogleFonts.lato(
+                                  fontSize: 24,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                'µg/m3',
+                                style: GoogleFonts.lato(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ],
