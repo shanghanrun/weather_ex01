@@ -67,46 +67,99 @@ class _WeatherScreenState extends State<WeatherScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(height: 150),
-                  Text(
-                    'Seoul',
-                    style: GoogleFonts.lato(
-                      fontSize: 35.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 150),
+                            Text(
+                              'Seoul',
+                              style: GoogleFonts.lato(
+                                fontSize: 35.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                TimerBuilder.periodic(
+                                  const Duration(minutes: 1),
+                                  builder: (context) {
+                                    print(getSystemTime());
+                                    return Text(
+                                      getSystemTime(),
+                                      style: GoogleFonts.lato(
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                // const SizedBox(width: 10),
+                                Text(
+                                  DateFormat('- EEE, ').format(date),
+                                  style: GoogleFonts.lato(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(
+                                  DateFormat('d MMM, yyy').format(date),
+                                  style: GoogleFonts.lato(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '18\u2103',
+                              style: GoogleFonts.lato(
+                                fontSize: 85.0,
+                                fontWeight: FontWeight.w300,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                SvgPicture.asset('svg/climacon-sun.svg'),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'clear sky',
+                                  style: GoogleFonts.lato(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  Row(
+                  const Column(
                     children: [
-                      TimerBuilder.periodic(
-                        const Duration(minutes: 1),
-                        builder: (context) {
-                          print(getSystemTime());
-                          return Text(
-                            getSystemTime(),
-                            style: GoogleFonts.lato(
-                              fontSize: 14,
-                              color: Colors.white,
-                            ),
-                          );
-                        },
+                      Divider(
+                        height: 15,
+                        thickness: 2,
+                        color: Colors.white54,
                       ),
-                      // const SizedBox(width: 10),
-                      Text(
-                        DateFormat('- EEE, ').format(date),
-                        style: GoogleFonts.lato(
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        DateFormat('d MMM, yyy').format(date),
-                        style: GoogleFonts.lato(
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
+                      Row(
+                        children: [
+                          Text('미세먼지'),
+                        ],
                       ),
                     ],
                   ),
