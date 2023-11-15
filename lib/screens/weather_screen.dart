@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:timer_builder/timer_builder.dart';
+import 'package:intl/intl.dart';
 
 class WeatherScreen extends StatefulWidget {
   final dynamic weatherData;
@@ -10,6 +14,7 @@ class WeatherScreen extends StatefulWidget {
 
 class _WeatherScreenState extends State<WeatherScreen> {
   var weather, temp, humidity, wind, city;
+  var date = DateTime.now();
   @override
   void initState() {
     super.initState();
@@ -20,34 +25,94 @@ class _WeatherScreenState extends State<WeatherScreen> {
   void updateData(dynamic data) {
     weather = data['weather'][0]['main'];
     temp = data['main']['temp'];
+    temp = temp.round();
     humidity = data['main']['humidity'];
     wind = data['wind']['speed'];
     city = data['name'];
   }
 
+  String getSystemTime() {
+    var now = DateTime.now();
+    return DateFormat("h:mm a").format(now);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '도시이름: $city',
-              style: const TextStyle(
-                  fontSize: 30,
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          title: const Text(''),
+          leading: IconButton(
+            icon: const Icon(Icons.near_me),
+            onPressed: () {},
+            iconSize: 30,
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.location_searching),
+              onPressed: () {},
+              iconSize: 30,
             ),
-            const SizedBox(height: 20),
-            Text('날씨: $weather', style: const TextStyle(fontSize: 30)),
-            // Text(
-            //   '온도: ${temp!.toStringAsFixed(0)} ℃',
-            // ), //반올림 된다.
-            Text('온도: ${temp!.round()} ℃', //반올림
-                style: const TextStyle(fontSize: 30)),
-            Text('습도: $humidity', style: const TextStyle(fontSize: 30)),
-            Text('풍속: $wind', style: const TextStyle(fontSize: 30)),
+          ]),
+      body: Container(
+        // padding: const EdgeInsets.all(20),
+        child: Stack(
+          children: [
+            Image.asset('images/background.jpg',
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.cover),
+            Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 150),
+                  Text(
+                    'Seoul',
+                    style: GoogleFonts.lato(
+                      fontSize: 35.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      TimerBuilder.periodic(
+                        const Duration(minutes: 1),
+                        builder: (context) {
+                          print(getSystemTime());
+                          return Text(
+                            getSystemTime(),
+                            style: GoogleFonts.lato(
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          );
+                        },
+                      ),
+                      // const SizedBox(width: 10),
+                      Text(
+                        DateFormat('- EEE, ').format(date),
+                        style: GoogleFonts.lato(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        DateFormat('d MMM, yyy').format(date),
+                        style: GoogleFonts.lato(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
