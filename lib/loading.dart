@@ -13,7 +13,7 @@ class Loading extends StatefulWidget {
 
 class _LoadingState extends State<Loading> {
   var _lat, _lon;
-  var _data; // json 결과 다양한 타입
+  var _weatherData, _airData; // json 결과 다양한 타입
   // String? weather;
   // double? temp, humidity, wind;
   // bool isLoading = true; // 데이터 로딩상태를 관리하기 위한 변수
@@ -31,21 +31,29 @@ class _LoadingState extends State<Loading> {
   Future<void> fetchData() async {
     MyLocation myLocation = MyLocation();
     await myLocation.getCurrentLocation();
-    _lat = myLocation.lat;
-    _lon = myLocation.lon;
+    _lat = myLocation.lat.toString(); //안전하게 문자열로 전환
+    _lon = myLocation.lon.toString();
 
     await dotenv.load();
     String apiKey = dotenv.env['APIKEY']!;
     var url = Uri.parse(
         'https://api.openweathermap.org/data/2.5/weather?lat=$_lat&lon=$_lon&appid=$apiKey&units=metric');
 
+    var url2 = Uri.parse(
+        'http://api.openweathermap.org/data/2.5/air_pollution?lat=$_lat&lon=$_lon&appid=$apiKey');
+
     Network network = Network(url);
-    _data = await network.getJsonData();
+    _weatherData = await network.getJsonData();
+    Network network2 = Network(url2);
+    _airData = await network2.getJsonData();
 
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => WeatherScreen(weatherData: _data)));
+            builder: (context) => WeatherScreen(
+                  weatherData: _weatherData,
+                  airData: _airData,
+                )));
 
     // weather = _data['weather'][0]['main'];
     // temp = (_data['main']['temp'] - 32) / 1.8;

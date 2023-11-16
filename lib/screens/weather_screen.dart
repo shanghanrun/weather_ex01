@@ -4,32 +4,59 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:timer_builder/timer_builder.dart';
 import 'package:intl/intl.dart';
 
+import '../model/model.dart';
+
 class WeatherScreen extends StatefulWidget {
   final dynamic weatherData;
-  const WeatherScreen({required this.weatherData, super.key});
+  final dynamic airData;
+  const WeatherScreen(
+      {required this.weatherData, required this.airData, super.key});
 
   @override
   State<WeatherScreen> createState() => _WeatherScreenState();
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
-  var weather, id, temp, humidity, wind, city;
+  var weather,
+      id,
+      icon,
+      temp,
+      humidity,
+      wind,
+      city,
+      description,
+      index,
+      dust1,
+      dust2,
+      airIcon,
+      airState;
   var date = DateTime.now();
   @override
   void initState() {
     super.initState();
     print('WeatherScreen으로 날씨정보 받아옴 : \n${widget.weatherData}'); // 부모의 값
-    updateData(widget.weatherData);
+    print('WeatherScreen으로 대기정보 받아옴 : \n${widget.airData}');
+    updateData(widget.weatherData, widget.airData);
   }
 
-  void updateData(dynamic data) {
-    weather = data['weather'][0]['main'];
-    id = data['weather'][0]['id'];
-    temp = data['main']['temp'];
+  void updateData(dynamic data1, dynamic data2) {
+    weather = data1['weather'][0]['main'];
+    id = data1['weather'][0]['id'];
+    description = data1['weather'][0]['description'];
+    temp = data1['main']['temp'];
     temp = temp.round();
-    humidity = data['main']['humidity'];
-    wind = data['wind']['speed'];
-    city = data['name'];
+    humidity = data1['main']['humidity'];
+    wind = data1['wind']['speed'];
+    city = data1['name'];
+
+    index = data2['list'][0]['main']['aqi'];
+    dust1 = data2['list'][0]['components']['pm10'];
+    dust2 = data2['list'][0]['components']['pm2_5'];
+
+    Model model = Model();
+    icon = model.getWeatherIcon(id);
+    airIcon = model.getAirIcon(index);
+    airState = model.getAirState(index);
   }
 
   String getSystemTime() {
@@ -44,7 +71,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-          title: const Text(''),
+          // title: const Text(''),
           leading: IconButton(
             icon: const Icon(Icons.near_me),
             onPressed: () {},
@@ -134,10 +161,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
                             ),
                             Row(
                               children: [
-                                SvgPicture.asset('svg/climacon-sun.svg'),
+                                SvgPicture.asset(icon),
                                 const SizedBox(width: 10),
                                 Text(
-                                  'clear sky',
+                                  description,
                                   style: GoogleFonts.lato(
                                     fontSize: 16,
                                     color: Colors.white,
@@ -171,13 +198,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               ),
                               const SizedBox(height: 10),
                               Image.asset(
-                                'Images/bad.png',
+                                airIcon,
                                 width: 37,
                                 height: 35,
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                '매우나쁨',
+                                airState,
                                 style: GoogleFonts.lato(
                                   fontSize: 14,
                                   color: Colors.black,
@@ -197,7 +224,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                '174.75',
+                                dust1.toString(),
                                 style: GoogleFonts.lato(
                                   fontSize: 24,
                                   color: Colors.white,
@@ -225,7 +252,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               ),
                               const SizedBox(height: 10),
                               Text(
-                                '84.03',
+                                '$dust2',
                                 style: GoogleFonts.lato(
                                   fontSize: 24,
                                   color: Colors.white,
