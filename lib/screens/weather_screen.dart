@@ -5,6 +5,7 @@ import 'package:timer_builder/timer_builder.dart';
 import 'package:intl/intl.dart';
 
 import '../model/model.dart';
+// import 'package:animated_svg/animated_svg.dart';
 
 class WeatherScreen extends StatefulWidget {
   final dynamic weatherData;
@@ -31,6 +32,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       airIcon,
       airState;
   var date = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +54,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     index = data2['list'][0]['main']['aqi'];
     dust1 = data2['list'][0]['components']['pm10'];
     dust2 = data2['list'][0]['components']['pm2_5'];
+    //만약 int 형을 double형으로 변환시키고 싶으면 .toDouble()
 
     Model model = Model();
     icon = model.getWeatherIcon(id);

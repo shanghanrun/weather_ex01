@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:weather_ex01/mylocation.dart';
 import 'network.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/weather_screen.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class Loading extends StatefulWidget {
   const Loading({super.key});
@@ -72,7 +74,14 @@ class _LoadingState extends State<Loading> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center());
+    return const Scaffold(
+      body: Center(
+        child: SpinKitWave(
+          color: Colors.green,
+          size: 50,
+        ),
+      ),
+    );
   }
   //       child: isLoading
   //           ? const CircularProgressIndicator()
